@@ -8,7 +8,7 @@ const produtoSchema = Joi.object({
 
     quantidade: Joi.number().integer().min(0),
 
-    preco: Joi.number().positive().precision(2).
+    preco: Joi.number().positive().precision(2)
 })
 
 const Produto = model("produto", new Schema({
