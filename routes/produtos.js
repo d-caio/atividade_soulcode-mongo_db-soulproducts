@@ -3,7 +3,16 @@ const { Produto, produtoJoi } = require("../models/produto")
 const router = Router()
 const multer = require('multer');
 
-const upload = multer({dest: 'uploads/'})
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname)
+    }
+})
+
+const upload = multer({ storage: storage })
 
 router.post("/produtos", async (req, res) => {
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
@@ -75,7 +84,7 @@ router.put("/produtos/atualizar/:categoriaProduto", async (req, res) => {
     try {
         const produtosAtualizados = await Produto.updateMany({ categoria: categoriaProduto }, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
         res.json({ message: "Produtos atualizados com sucesso." })
-} catch (erro) {
+    } catch (erro) {
         res.status(500).json({ message: "Um erro aconteceu." })
     }
 })
@@ -110,8 +119,23 @@ router.delete("/produtos/excluir/:nome", async (req, res) => {
     }
 })
 
-router.post('/upload', upload.single('file'), (request, response) => {
-    console.log(request.file)
+router.post("/upload", upload.single('file'), (req, res) => {
+    console.log(req.file)
+})
+
+router.put('/upload/:id', async (req, res) => {
+    const { id } = req.params
+    const { imgProduto } = req.body
+    try {
+        const produto = await Produto.findByIdAndUpdate(id, { imgProduto })
+        if (produto) {
+            res.json({ message: "Imagem subida com sucesso." })
+        } else {
+            res.status(404).json({ message: "Produto não encontrado." })
+        }
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
 })
 
 module.exports = router
