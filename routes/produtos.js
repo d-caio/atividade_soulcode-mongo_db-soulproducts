@@ -40,6 +40,26 @@ router.get("/produtos/:id", async (req, res) => {
     }
 })
 
+router.get("/produtos/nome/:nome", async (req, res) => {
+    const { nome } = req.params
+    try {
+        const produto = await Produto.findOne({ nome })
+        produto ? res.json(produto) : res.status(404).json({ message: "Produto não encontrado." })
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
+})
+
+router.get("/produtos/categoria/:categoria", async (req, res) => {
+    const { categoria } = req.params
+    try {
+        const produto = await Produto.findOne({ categoria })
+        produto ? res.json(produto) : res.status(404).json({ message: "Produto não encontrado." })
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
+})
+
 router.put("/produtos/:id", async (req, res) => {
     const { id } = req.params
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
@@ -57,11 +77,43 @@ router.put("/produtos/:id", async (req, res) => {
     }
 })
 
+router.put("/produtos/atualizar/:nomeProduto", async (req, res) => {
+    const { nomeProduto } = req.params
+    const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
+
+    try {
+        const produtosAtualizados = await Produto.updateMany({ nome: nomeProduto }, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
+        res.json({ message: "Produtos atualizados com sucesso." })
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
+})
+
 router.delete("/produtos/:id", async (req, res) => {
     const { id } = req.params
     try {
         const produto = await Produto.findByIdAndRemove(id)
         produto ? res.json({ message: "Produto excluído com sucesso." }) : res.status(404).json({ message: "Produto não encontrado." })
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
+})
+
+router.delete("/produtos/excluir/desconto/:desconto", async (req, res) => {
+    const { desconto } = req.params
+    try {
+        await Produto.deleteMany({ desconto: { $gte: desconto } })
+        res.json(`Produtos excluídos com sucesso.`)
+    } catch (erro) {
+        res.status(500).json({ message: "Um erro aconteceu." })
+    }
+})
+
+router.delete("/produtos/excluir/:nome", async (req, res) => {
+    const { nome } = req.params
+    try {
+        const produtoExcluido = await Produto.findOneAndRemove({ nome })
+        produtoExcluido ? res.json({ message: "produto excluído com sucesso." }) : res.status(404).json({ message: "Produto não encontrado." })
     } catch (erro) {
         res.status(500).json({ message: "Um erro aconteceu." })
     }
