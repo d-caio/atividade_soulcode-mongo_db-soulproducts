@@ -1,8 +1,9 @@
 const { Router } = require("express")
-
 const { Produto, produtoJoi } = require("../models/produto")
-
 const router = Router()
+const multer = require('multer');
+
+const upload = multer({dest: 'uploads/'})
 
 router.post("/produtos", async (req, res) => {
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
@@ -50,16 +51,6 @@ router.get("/produtos/nome/:nome", async (req, res) => {
     }
 })
 
-router.get("/produtos/categoria/:categoria", async (req, res) => {
-    const { categoria } = req.params
-    try {
-        const produto = await Produto.findOne({ categoria })
-        produto ? res.json(produto) : res.status(404).json({ message: "Produto não encontrado." })
-    } catch (erro) {
-        res.status(500).json({ message: "Um erro aconteceu." })
-    }
-})
-
 router.put("/produtos/:id", async (req, res) => {
     const { id } = req.params
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
@@ -77,14 +68,14 @@ router.put("/produtos/:id", async (req, res) => {
     }
 })
 
-router.put("/produtos/atualizar/:nomeProduto", async (req, res) => {
-    const { nomeProduto } = req.params
+router.put("/produtos/atualizar/:categoriaProduto", async (req, res) => {
+    const { categoriaProduto } = req.params
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
 
     try {
-        const produtosAtualizados = await Produto.updateMany({ nome: nomeProduto }, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
+        const produtosAtualizados = await Produto.updateMany({ categoria: categoriaProduto }, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
         res.json({ message: "Produtos atualizados com sucesso." })
-    } catch (erro) {
+} catch (erro) {
         res.status(500).json({ message: "Um erro aconteceu." })
     }
 })
@@ -117,6 +108,10 @@ router.delete("/produtos/excluir/:nome", async (req, res) => {
     } catch (erro) {
         res.status(500).json({ message: "Um erro aconteceu." })
     }
+})
+
+router.post('/upload', upload.single('file'), (request, response) => {
+    console.log(request.file)
 })
 
 module.exports = router

@@ -1,0 +1,333 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"API de produtos",
+      "version":"1.0"
+    },
+    "servers": [
+      {"url":"http://localhost:3000"}
+    ],
+    "components": {
+        "schemas": {
+            "DbProdutos":{
+            "nome": {
+                "type": "object",
+                "properties": {
+                    "property": {
+                        "type": "string",
+                        "description": "nome do produto"
+                    }
+                }
+            },
+            "descricao": {
+                "type" : "object",
+                "properties": {
+                    "property": {
+                        "type": "string",
+                        "description": "descrição do produto"
+                    }
+                }
+            },
+            "quantidade": {
+                "type" : "object",
+                "properties" : {
+                    "property": {
+                        "type": "integer",
+                        "description": "numero de quantidade do produto"
+                    }
+                }
+            },
+            "preco": {
+                "type" : "object",
+                "properties" : {
+                    "property": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "preço do produto"
+                    }
+                }
+            },
+            "desconto" : {
+                "type" : "object",
+                "properties" : {
+                    "property" : {
+                        "type": "number",
+                        "format": "double",
+                        "description": "desconto do produto"
+                    }
+                }
+            },
+            "dataDesconto": {
+                "type": "object",
+                "properties": {
+                    "property" : {
+                        "type" : "string",
+                        "description" : "Data do desconto"
+                    }
+                }
+            },
+            "categoria": {
+                "type" : "object",
+                "properties": {
+                    "property" : {
+                        "type" : "string",
+                        "description": "categoria do produto"
+                }
+            }
+            },
+            "imgProduto": {
+                "type": "object",
+                "properties": {
+                    "property" : {
+                        "type" : "string",
+                        "description" : "imagem do produto"
+                    }
+                }
+            }
+    }
+    
+            }
+        },
+    "paths": {
+        "/produtos": {
+            "post": {
+                "tags":["Produtos"],
+                "summary" : "Insere novo produto no banco de dados",
+                "description": "Adicionar novo produto",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema" : {
+                                "$ref": "#/components/schemas/DbProdutos"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto cadastrado com sucesso"
+                    },
+                    "400": {
+                        "description": "Produto incorreto"
+                    }
+                }
+            },
+            "get": {
+                "tags":["Produtos"],
+                "summary": "Listagem de produtos no banco de dados",
+                "description": "Listagem de produtos", 
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Usuário não encontrado"
+                    }       
+                }
+            }      
+        },
+        "/produtos/{id}": {
+            "get": {
+                "tags":["Produtos"],
+                "summary" : "Pesquisa produto pelo ID no banco de dados",
+                "description": "",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "Id do produto",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                      }
+                }
+                ],
+                "responses": {
+                    "200": {
+                    "description": "OK",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                        "$ref": "#/components/schemas/DbProdutos"
+                        }     
+                }
+            }
+        },
+        "404": {
+            "description" : "Produto não encontrado"
+        }
+    }
+        },
+            "put": {
+            "tags":["Produtos"],
+            "summary": "Atualizar o produto pelo ID",
+            "description": "Atualização do produto",
+            "parameters": [
+                {
+                "name": "id",
+                "in": "path",
+                "description": "ID do produto a ser atualizado",
+                "required": true,
+                "type": "String"
+                }
+            ],
+            "requestBody": {
+                "description": "Defina as novas informações do produto",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/DbProdutos"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Atualizado com sucesso!"
+                },
+                "400": {
+                    "description": "Produto não encontrado"
+                }
+            }
+        },
+            "delete": {
+            "tags": ["Produtos"],
+            "summary": "Remover um objeto pelo ID",
+            "description": "Remover produto pelo ID",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID do produto a ser removido",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Produto removido com sucesso"
+                },
+                "400": {
+                    "description": "Produto não encontrado"
+                }
+            }
+        }
+        },
+        "/produtos/nome/{nome}":{
+            "get": {
+                    "tags":["Produtos"],
+                    "summary" : "Pesquisa produto pelo NOME no banco de dados",
+                    "description": "Pesquisar produto pelo NOME",
+                    "parameters": [{
+                        "name": "nome",
+                        "in": "path",
+                        "description": "Nome do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                    ],
+                    "responses": {
+                        "200": {
+                        "description": "OK",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                            "$ref": "#/components/schemas/DbProdutos"
+                            },
+                            "404": {
+                                "description" : "Produto não encontrado"
+                            }
+                    }
+                }
+            }
+        }
+            }  
+        },
+        "/produtos/excluir/{nome}" :{
+            "delete": {
+                "tags": ["Produtos"],
+                "summary": "Delete um produto pelo NOME",
+                "description": "Delete um usuário pelo NOME",
+                "parameters": [
+                    {
+                        "name": "nome",
+                        "in": "path",
+                        "description": "Nome do produto a ser removido",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto removido com sucesso!"
+                    },
+                    "400": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            }
+        },
+        "/produtos/excluir/desconto/{desconto}": {
+            "delete": {
+                "tags": ["Produtos"],
+                "summary": "Delete um produto pelo DESCONTO",
+                "description": "Delete um usuário pelo DESCONTO",
+                "parameters": [
+                    {
+                        "name": "desconto",
+                        "in": "path",
+                        "description": "desconto a ser removido",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto removido com sucesso!"
+                    },
+                    "400": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            }
+        },
+        "/produtos/atualizar/{categoria}":{
+            "put": {
+                "tags":["Produtos"],
+                "summary": "Atualizar o produto pela CATEGORIA",
+                "description": "Atualização do produto",
+                "parameters": [
+                    {
+                    "name": "categoria",
+                    "in": "path",
+                    "description": "categoria do produto a ser atualizado",
+                    "required": true,
+                    "type": "String"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Defina as novas informações do produto",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DbProdutos"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Atualizado com sucesso!"
+                    },
+                    "400": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            }
+        }
+}
+}
