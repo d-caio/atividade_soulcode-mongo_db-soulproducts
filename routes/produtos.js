@@ -1,15 +1,20 @@
 const { Router } = require("express")
 
-const Produto = require("../models/produto")
+const { Produto, produtoJoi } = require("../models/produto")
 
 const router = Router()
 
 router.post("/produtos", async (req, res) => {
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
     try {
-        const novoProduto = new Produto({ nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
-        await novoProduto.save()
-        res.status(201).json(novoProduto)
+        const { error } = produtoJoi.validate(req.body)
+        if (error) {
+            res.status(400).json(error)
+        } else {
+            const novoProduto = new Produto({ nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
+            await novoProduto.save()
+            res.status(201).json(novoProduto)
+        }
     } catch (erro) {
         console.error(erro)
         res.status(500).json({ message: "Aconteceu um erro." })
@@ -40,8 +45,13 @@ router.put("/produtos/:id", async (req, res) => {
     const { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto } = req.body
 
     try {
-        const produto = await Produto.findByIdAndUpdate(id, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
-        produto ? res.json({ message: `Produto atualizado com sucesso: ${produto}` }) : res.status(404).json({ message: "Produto não encontrado." })
+        const { error } = produtoJoi.validate(req.body)
+        if (error) {
+            res.status(400).json(error)
+        } else {
+            const produto = await Produto.findByIdAndUpdate(id, { nome, descricao, quantidade, preco, desconto, dataDesconto, categoria, imgProduto })
+            produto ? res.json({ message: `Produto atualizado com sucesso: ${produto}` }) : res.status(404).json({ message: "Produto não encontrado." })
+        }
     } catch (erro) {
         res.status(500).json({ message: "Um erro aconteceu." })
     }
